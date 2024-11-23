@@ -7,6 +7,9 @@ import SharedModels
 public struct Home: Reducer, Sendable {
     @ObservableState
     public struct State: Equatable {
+        var checks: [CheckPreview]?
+        var isLoading = false
+
         public init() {}
     }
 
@@ -17,12 +20,15 @@ public struct Home: Reducer, Sendable {
 
         public enum Delegate {}
 
-        public enum Internal {}
+        public enum Internal {
+            case checksResponse(Result<[CheckPreview], Error>)
+        }
 
         public enum View: BindableAction {
             case binding(BindingAction<Home.State>)
             case onFirstAppear
-            case onAppear
+            case task
+            case logoutButtonTapped
         }
     }
 
@@ -35,22 +41,41 @@ public struct Home: Reducer, Sendable {
     public var body: some ReducerOf<Self> {
         BindingReducer(action: \.view)
 
-        Reduce { _, action in
+        Reduce { state, action in
             switch action {
             case .delegate:
-                .none
+                return .none
+
+            case let .internal(.checksResponse(.success(checks))):
+                state.checks = checks
+                return .none
 
             case .internal:
-                .none
+                return .none
 
             case .view(.binding):
-                .none
+                return .none
 
             case .view(.onFirstAppear):
-                .none
+                return .none
 
-            case .view(.onAppear):
-                .none
+            case .view(.task):
+                return self.reload(&state)
+
+            case .view(.logoutButtonTapped):
+                return .none
+            }
+        }
+    }
+
+    private func reload(_ state: inout State) -> Effect<Action> {
+        .run { [state] send in
+            await withDiscardingTaskGroup { group in
+                group.addTask {
+                    await send(.internal(.checksResponse(Result {
+                        try await self.api.getAllChecks()
+                    })))
+                }
             }
         }
     }

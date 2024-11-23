@@ -14,32 +14,40 @@ public struct HomeView: View {
     }
 
     public var body: some View {
-        ScrollView {
-            EmptyTabView()
+        ScrollView(.vertical) {
+            if let checks = self.store.checks {
+                LazyVStack(spacing: 14) {
+                    ForEach(checks) { check in
+                        Button {
+//                            send(.courseTapped(course))
+                        } label: {
+                            CheckCard(check: check)
+                        }
+                    }
+                }
+            } else if self.store.isLoading {
+                ProgressView()
+            } else {
+                Text("There are no checks for now")
+            }
         }
+        .refreshable { await send(.task).finish() }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contentMargins(.all, 16, for: .scrollContent)
-        .onAppear {
-            send(.onAppear)
-        }
+        .task { await send(.task).finish() }
+        .onFirstAppear { send(.onFirstAppear) }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-//                    send(.settingsButtonTapped)
+                    send(.logoutButtonTapped)
                 } label: {
-                    Image(systemName: "gearshape.fill")
+                    Image(systemName: "iphone.and.arrow.right.outward")
                         .resizable()
                         .frame(width: 22, height: 22)
                         .padding(13)
                         .clipShape(Circle())
                 }
             }
-        }
-        .onFirstAppear {
-            send(.onFirstAppear)
-        }
-        .onAppear {
-            send(.onAppear)
         }
     }
 }

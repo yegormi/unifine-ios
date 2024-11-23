@@ -12,7 +12,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthRequestDto'
+              $ref: '#/components/schemas/SignupRequestDto'
       responses:
         '201':
           description: ''
@@ -44,7 +44,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthRequestDto'
+              $ref: '#/components/schemas/LoginRequestDto'
       responses:
         '200':
           description: ''
@@ -219,7 +219,7 @@ components:
       bearerFormat: JWT
       type: http
   schemas:
-    AuthRequestDto:
+    SignupRequestDto:
       type: object
       properties:
         email:
@@ -282,7 +282,7 @@ components:
             entity: User
       required:
         - message
-    AuthRequestDto:
+    LoginRequestDto:
       type: object
       properties:
         email:
@@ -351,27 +351,38 @@ components:
           type: string
         prompt:
           type: string
+        title:
+          type: string
         summary:
           type: string
         issues:
           type: array
           items:
             $ref: '#/components/schemas/IssueDto'
+        createdAt:
+          type: string
+          format: date-time
       required:
         - id
         - prompt
+        - title
         - summary
         - issues
+        - createdAt
     CheckPreviewDto:
       type: object
       properties:
         id:
           type: string
-        prompt:
+        title:
           type: string
         summary:
           type: string
+        createdAt:
+          type: string
+          format: date-time
       required:
         - id
-        - prompt
+        - title
         - summary
+        - createdAt

@@ -33,35 +33,44 @@ public struct Check: Sendable, Equatable, Identifiable {
 
     public let id: String
     public let prompt: String
+    public let title: String
     public let summary: String
     public let issues: [Issue]
+    public let createdAt: Date
 
     public init(
         id: String,
         prompt: String,
+        title: String,
         summary: String,
-        issues: [Issue]
+        issues: [Issue],
+        createdAt: Date
     ) {
         self.id = id
         self.prompt = prompt
+        self.title = title
         self.summary = summary
         self.issues = issues
+        self.createdAt = createdAt
     }
 }
 
 public struct CheckPreview: Sendable, Equatable, Identifiable {
     public let id: String
-    public let prompt: String
+    public let title: String
     public let summary: String
+    public let createdAt: Date
 
     public init(
         id: String,
-        prompt: String,
-        summary: String
+        title: String,
+        summary: String,
+        createdAt: Date
     ) {
         self.id = id
-        self.prompt = prompt
+        self.title = title
         self.summary = summary
+        self.createdAt = createdAt
     }
 }
 
@@ -83,22 +92,26 @@ public extension Check {
     static let mock = Self(
         id: "mock-check-id",
         prompt: "mock prompt",
+        title: "mock title",
         summary: "mock summary",
-        issues: [.mock]
+        issues: [.mock],
+        createdAt: .now
     )
 }
 
 public extension CheckPreview {
     static let mock1 = Self(
         id: "1",
-        prompt: "mock prompt 1234",
-        summary: "mock summary"
+        title: "mock title",
+        summary: "mock summary",
+        createdAt: .now
     )
 
     static let mock2 = Self(
         id: "2",
-        prompt: "mock prompt 5678",
-        summary: "mock summary"
+        title: "mock title",
+        summary: "mock summary",
+        createdAt: .now
     )
 }
 

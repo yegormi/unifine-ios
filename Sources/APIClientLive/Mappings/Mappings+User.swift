@@ -12,7 +12,11 @@ extension Components.Schemas.UserDto {
 }
 
 extension AuthRequest {
-    func toAPI() -> Components.Schemas.AuthRequestDto {
+    func toAPI() -> Components.Schemas.SignupRequestDto {
+        .init(email: self.email, password: self.password)
+    }
+
+    func toAPI() -> Components.Schemas.LoginRequestDto {
         .init(email: self.email, password: self.password)
     }
 }

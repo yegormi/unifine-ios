@@ -9,8 +9,10 @@ extension Components.Schemas.CheckDto {
         Check(
             id: self.id,
             prompt: self.prompt,
+            title: self.title,
             summary: self.summary,
-            issues: self.issues.map { $0.toDomain() }
+            issues: self.issues.map { $0.toDomain() },
+            createdAt: self.createdAt
         )
     }
 }
@@ -33,8 +35,9 @@ extension Components.Schemas.CheckPreviewDto {
     func toDomain() -> CheckPreview {
         CheckPreview(
             id: self.id,
-            prompt: self.prompt,
-            summary: self.summary
+            title: self.title,
+            summary: self.summary,
+            createdAt: self.createdAt
         )
     }
 }
