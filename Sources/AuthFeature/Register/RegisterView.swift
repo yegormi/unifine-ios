@@ -31,7 +31,7 @@ public struct RegisterView: View {
                             .autocapitalization(.none)
                             .keyboardType(.emailAddress)
                     }
-                    
+
                     VStack(spacing: 4) {
                         Text("Password")
                             .font(.system(size: 15))
@@ -40,7 +40,7 @@ public struct RegisterView: View {
                             .textFieldStyle(.auth)
                             .textContentType(.newPassword)
                     }
-                    
+
                     VStack(spacing: 4) {
                         Text("Confirm Password")
                             .font(.system(size: 15))

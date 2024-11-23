@@ -1,39 +1,13 @@
 import Foundation
 import SharedModels
 
-public struct SignupRequest: Sendable {
+public struct AuthRequest: Sendable {
     public let email: String
     public let password: String
-    
+
     public init(email: String, password: String) {
         self.email = email
         self.password = password
-    }
-}
-
-public struct LoginRequest: Sendable {
-    public let email: String
-    public let password: String
-    
-    public init(email: String, password: String) {
-        self.email = email
-        self.password = password
-    }
-}
-
-public struct AuthResponse: Sendable {
-    public let accessToken: String
-    public let user: User
-    
-    public init(accessToken: String, user: User) {
-        self.accessToken = accessToken
-        self.user = user
-    }
-}
-
-public extension AuthResponse {
-    static var mock: Self {
-        AuthResponse(accessToken: "mock", user: .mock)
     }
 }
 
@@ -43,7 +17,7 @@ public struct CreateCheckRequest: Sendable {
     public let excludedWords: String
     public let prompt: String
     public let file: Data
-    
+
     public init(
         topic: String,
         style: String,

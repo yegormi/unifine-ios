@@ -1,8 +1,8 @@
 import APIClient
 import Foundation
-import SharedModels
 import OpenAPIRuntime
 import OpenAPIURLSession
+import SharedModels
 
 extension Components.Schemas.CheckDto {
     func toDomain() -> Check {
@@ -43,10 +43,12 @@ struct DataConversionError: Error {}
 
 extension CreateCheckRequest {
     func toMultipartForm() throws -> MultipartBody<Components.Schemas.CreateCheckDto> {
-        guard let topicData = self.topic.data(using: .utf8),
-              let styleData = self.style.data(using: .utf8),
-              let excludedWordsData = self.excludedWords.data(using: .utf8),
-              let promptData = self.prompt.data(using: .utf8) else {
+        guard
+            let topicData = self.topic.data(using: .utf8),
+            let styleData = self.style.data(using: .utf8),
+            let excludedWordsData = self.excludedWords.data(using: .utf8),
+            let promptData = self.prompt.data(using: .utf8)
+        else {
             throw DataConversionError()
         }
         return [

@@ -28,7 +28,7 @@ public extension Font {
     static var titleMedium: Self {
         .system(size: 16, weight: .semibold)
     }
-    
+
     static var titleLarge: Self {
         .system(size: 18, weight: .semibold)
     }

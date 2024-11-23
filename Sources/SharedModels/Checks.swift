@@ -11,7 +11,7 @@ public struct Check: Sendable, Equatable, Identifiable {
         public let suggestion: String
         public let startIndex: Int
         public let endIndex: Int
-        
+
         public init(
             id: String,
             type: String,
@@ -30,11 +30,12 @@ public struct Check: Sendable, Equatable, Identifiable {
             self.endIndex = endIndex
         }
     }
+
     public let id: String
     public let prompt: String
     public let summary: String
     public let issues: [Issue]
-    
+
     public init(
         id: String,
         prompt: String,
@@ -52,7 +53,7 @@ public struct CheckPreview: Sendable, Equatable, Identifiable {
     public let id: String
     public let prompt: String
     public let summary: String
-    
+
     public init(
         id: String,
         prompt: String,
@@ -93,7 +94,7 @@ public extension CheckPreview {
         prompt: "mock prompt 1234",
         summary: "mock summary"
     )
-    
+
     static let mock2 = Self(
         id: "2",
         prompt: "mock prompt 5678",

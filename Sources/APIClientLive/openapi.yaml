@@ -12,7 +12,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SignupRequestDto'
+              $ref: '#/components/schemas/AuthRequestDto'
       responses:
         '201':
           description: ''
@@ -44,7 +44,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginRequestDto'
+              $ref: '#/components/schemas/AuthRequestDto'
       responses:
         '200':
           description: ''
@@ -219,7 +219,7 @@ components:
       bearerFormat: JWT
       type: http
   schemas:
-    SignupRequestDto:
+    AuthRequestDto:
       type: object
       properties:
         email:
@@ -282,7 +282,7 @@ components:
             entity: User
       required:
         - message
-    LoginRequestDto:
+    AuthRequestDto:
       type: object
       properties:
         email:

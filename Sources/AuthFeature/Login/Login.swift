@@ -8,19 +8,20 @@ import SharedModels
 import SwiftHelpers
 
 @Reducer
-public struct Login: Reducer {
+public struct Login: Reducer, Sendable {
     @ObservableState
-    public struct State: Equatable {
+    public struct State: Equatable, Sendable {
         var path: StackState<Path.State>
 
         var email = ""
         var password = ""
         var isLoading = false
         var isFormValid: Bool {
-            return self.email.isValidEmail && !self.password.isEmpty
+            self.email.isValidEmail && !self.password.isEmpty
         }
+
         @Presents var destination: Destination.State?
-        
+
         public init() {
             self.path = StackState<Path.State>()
         }
@@ -38,7 +39,7 @@ public struct Login: Reducer {
         }
 
         public enum Internal {
-            case authResponse(Result<Void, Error>)
+            case authResponse(Result<AuthResponse, Error>)
         }
 
         public enum View: BindableAction {
@@ -47,13 +48,13 @@ public struct Login: Reducer {
             case registerButtonTapped
         }
     }
-    
-    @Reducer(state: .equatable)
+
+    @Reducer(state: .equatable, .sendable)
     public enum Path {
         case register(Register)
     }
 
-    @Reducer(state: .equatable)
+    @Reducer(state: .equatable, .sendable)
     public enum Destination {
         case alert(AlertState<Never>)
     }
@@ -70,10 +71,10 @@ public struct Login: Reducer {
             switch action {
             case .path(.element(id: _, action: .register(.delegate(.registerSuccessful)))):
                 return .send(.delegate(.loginSuccessful))
-            
+
             case .path:
                 return .none
-                
+
             case .delegate:
                 return .none
 
@@ -81,6 +82,8 @@ public struct Login: Reducer {
                 return .none
 
             case let .internal(.authResponse(result)):
+                state.isLoading = false
+
                 switch result {
                 case .success:
                     return .send(.delegate(.loginSuccessful))
@@ -110,8 +113,8 @@ public struct Login: Reducer {
 
         return .run { [state] send in
             await send(.internal(.authResponse(Result {
-                // Implement login logic here
-                return Void()
+                let request = AuthRequest(email: state.email, password: state.password)
+                return try await self.api.login(request)
             })))
         }
     }

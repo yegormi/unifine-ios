@@ -11,9 +11,8 @@ extension Components.Schemas.UserDto {
     }
 }
 
-
-extension LoginRequest {
-    func toAPI() -> Components.Schemas.LoginRequestDto {
+extension AuthRequest {
+    func toAPI() -> Components.Schemas.AuthRequestDto {
         .init(email: self.email, password: self.password)
     }
 }
@@ -24,16 +23,8 @@ extension Components.Schemas.LoginResponseDto {
     }
 }
 
-
-extension SignupRequest {
-    func toAPI() -> Components.Schemas.SignupRequestDto {
-        .init(email: self.email, password: self.password)
-    }
-}
-
 extension Components.Schemas.SignupResponseDto {
     func toDomain() -> AuthResponse {
         .init(accessToken: self.accessToken, user: self.user.toDomain())
     }
 }
-

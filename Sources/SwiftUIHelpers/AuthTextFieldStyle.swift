@@ -46,7 +46,7 @@ public extension TextFieldStyle where Self == AuthTextFieldStyle {
 
         TextField("Password", text: .constant(""))
             .textFieldStyle(.auth)
-        
+
         Spacer()
     }
     .padding()

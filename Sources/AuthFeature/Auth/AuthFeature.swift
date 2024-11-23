@@ -122,7 +122,7 @@ public struct AuthFeature: Reducer, Sendable {
 
         return .run { [state] send in
             await send(.internal(.authResponse(Result {
-                return Void()
+                ()
             })))
         }
     }
@@ -133,10 +133,8 @@ public struct AuthFeature: Reducer, Sendable {
 
         return .run { [state] send in
             await send(.internal(.authResponse(Result {
-                return Void()
+                ()
             })))
         }
     }
 }
-
-

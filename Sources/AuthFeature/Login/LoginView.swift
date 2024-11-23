@@ -40,7 +40,7 @@ public struct LoginView: View {
                         }
                     }
                     .padding(.bottom, 14)
-                    
+
                     Button {
                         send(.registerButtonTapped)
                     } label: {

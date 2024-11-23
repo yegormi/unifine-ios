@@ -13,8 +13,8 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
     @Dependency(\.appearance) var appearance
 
     func application(
-        _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+        _: UIApplication,
+        didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     )
         -> Bool
     {
@@ -22,7 +22,6 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
 
         // Override apple's buggy alerts tintColor not taking effect.
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor.accent
-
 
         return true
     }

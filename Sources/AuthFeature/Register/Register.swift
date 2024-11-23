@@ -8,16 +8,17 @@ import SharedModels
 import SwiftHelpers
 
 @Reducer
-public struct Register: Reducer {
+public struct Register: Reducer, Sendable {
     @ObservableState
-    public struct State: Equatable {
+    public struct State: Equatable, Sendable {
         var email = ""
         var password = ""
         var confirmPassword = ""
         var isLoading = false
         var isFormValid: Bool {
-            return self.email.isValidEmail && !self.password.isEmpty && self.password == self.confirmPassword
+            self.email.isValidEmail && !self.password.isEmpty && self.password == self.confirmPassword
         }
+
         @Presents var destination: Destination.State?
     }
 
@@ -32,7 +33,7 @@ public struct Register: Reducer {
         }
 
         public enum Internal {
-            case authResponse(Result<Void, Error>)
+            case authResponse(Result<AuthResponse, Error>)
         }
 
         public enum View: BindableAction {
@@ -41,7 +42,7 @@ public struct Register: Reducer {
         }
     }
 
-    @Reducer(state: .equatable)
+    @Reducer(state: .equatable, .sendable)
     public enum Destination {
         case alert(AlertState<Never>)
     }
@@ -63,6 +64,8 @@ public struct Register: Reducer {
                 return .none
 
             case let .internal(.authResponse(result)):
+                state.isLoading = false
+
                 switch result {
                 case .success:
                     return .send(.delegate(.registerSuccessful))
@@ -87,8 +90,8 @@ public struct Register: Reducer {
 
         return .run { [state] send in
             await send(.internal(.authResponse(Result {
-                // Implement registration logic here
-                return Void()
+                let request = AuthRequest(email: state.email, password: state.password)
+                return try await self.api.signup(request)
             })))
         }
     }
