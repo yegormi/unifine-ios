@@ -1,0 +1,142 @@
+openapi: 3.0.0
+paths:
+  /me:
+    get:
+      operationId: getMe
+      summary: Get the current user
+      tags:
+        - user
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorDto'
+      security:
+        - bearer: []
+    patch:
+      operationId: updateMe
+      summary: Update the current user
+      tags:
+        - user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+      responses:
+        '200':
+          description: ''
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorDto'
+    delete:
+      operationId: deleteMe
+      summary: Delete the current user
+      tags:
+        - user
+      parameters: []
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorDto'
+      security:
+        - bearer: []
+info:
+  title: UniFine API
+  description: REST API for UniFine
+  version: '1.0'
+  contact: {}
+tags: []
+servers:
+  - url: https://api.unifine.pp.ua
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+  schemas:
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 66c6fab4f13bf5134c167e8b
+          description: The id of the user
+        email:
+          type: string
+          example: johndoe@example.com
+          format: email
+          description: The email of the user
+          nullable: true
+        fullName:
+          type: string
+          example: John Doe
+          description: The full name of the user
+          nullable: true
+        phoneNumber:
+          type: string
+          example: '+1234567890'
+          description: The phone number of the user
+          nullable: true
+        avatar:
+          type: string
+          example: https://example.com/avatar.jpg
+          description: The avatar URL of the user
+          nullable: true
+      required:
+        - id
+        - email
+        - fullName
+        - phoneNumber
+        - avatar
+    ApiErrorDto:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+          example: entity-not-found
+          enum:
+            - internal
+            - unauthorized
+            - entity-not-found
+            - email-not-unique
+        message:
+          type: string
+          description: A human-readable message describing the error
+          example: Entity not found
+        details:
+          type: object
+          description: Additional details about the error
+          example:
+            entity: User
+      required:
+        - message
+    UpdateUserDto:
+      type: object
+      properties:
+        fullName:
+          type: string
+          example: John Doe
+          description: The full name of the user
+          nullable: true
