@@ -1,8 +1,8 @@
 import AuthFeature
 import ComposableArchitecture
+import HomeFeature
 import SplashFeature
 import SwiftUI
-import TabsFeature
 
 public struct AppView: View {
     let store: StoreOf<AppReducer>
@@ -20,9 +20,9 @@ public struct AppView: View {
                 if let store = self.store.scope(state: \.destination.login, action: \.destination.login) {
                     LoginView(store: store)
                 }
-            case .tabs:
-                if let store = self.store.scope(state: \.destination.tabs, action: \.destination.tabs) {
-                    TabsView(store: store)
+            case .home:
+                if let store = self.store.scope(state: \.destination.home, action: \.destination.home) {
+                    HomeView(store: store)
                 }
             }
         }

@@ -10,7 +10,6 @@ let package = Package(
         .macOS(.v14),
     ],
     products: [
-        .library(name: "AccountFeature", targets: ["AccountFeature"]),
         .library(name: "APIClient", targets: ["APIClient"]),
         .library(name: "APIClientLive", targets: ["APIClientLive"]),
         .library(name: "AppearanceClient", targets: ["AppearanceClient"]),
@@ -19,13 +18,11 @@ let package = Package(
         .library(name: "HomeFeature", targets: ["HomeFeature"]),
         .library(name: "KeychainClient", targets: ["KeychainClient"]),
         .library(name: "SessionClient", targets: ["SessionClient"]),
-        .library(name: "SettingsFeature", targets: ["SettingsFeature"]),
         .library(name: "SharedModels", targets: ["SharedModels"]),
         .library(name: "SplashFeature", targets: ["SplashFeature"]),
         .library(name: "Styleguide", targets: ["Styleguide"]),
         .library(name: "SwiftHelpers", targets: ["SwiftHelpers"]),
         .library(name: "SwiftUIHelpers", targets: ["SwiftUIHelpers"]),
-        .library(name: "TabsFeature", targets: ["TabsFeature"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-openapi-generator", from: "1.4.0"),
@@ -37,18 +34,6 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-tagged", from: "0.10.0"),
     ],
     targets: [
-        .target(
-            name: "AccountFeature",
-            dependencies: [
-                "APIClient",
-                "SessionClient",
-                "SettingsFeature",
-                "SharedModels",
-                "Styleguide",
-                "SwiftUIHelpers",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
         .target(
             name: "APIClient",
             dependencies: [
@@ -85,7 +70,7 @@ let package = Package(
             dependencies: [
                 "AuthFeature",
                 "SplashFeature",
-                "TabsFeature",
+                "HomeFeature",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),
@@ -136,18 +121,6 @@ let package = Package(
             ]
         ),
         .target(
-            name: "SettingsFeature",
-            dependencies: [
-                "APIClient",
-                "AppearanceClient",
-                "SessionClient",
-                "SharedModels",
-                "Styleguide",
-                "SwiftUIHelpers",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
             name: "SharedModels",
             dependencies: []
         ),
@@ -173,20 +146,6 @@ let package = Package(
             name: "SwiftUIHelpers",
             dependencies: [
                 "Styleguide",
-            ],
-            resources: [
-                .process("Resources")
-            ]
-        ),
-        .target(
-            name: "TabsFeature",
-            dependencies: [
-                "AccountFeature",
-                "HomeFeature",
-                "Styleguide",
-                "SwiftHelpers",
-                "SwiftUIHelpers",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             resources: [
                 .process("Resources")

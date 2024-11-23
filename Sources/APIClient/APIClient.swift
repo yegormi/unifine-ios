@@ -6,9 +6,16 @@ import XCTestDynamicOverlay
 
 @DependencyClient
 public struct APIClient: Sendable {
+    // User Operations
+    public var signup: @Sendable (SignupRequest) async throws -> AuthResponse
+    public var login: @Sendable (LoginRequest) async throws -> AuthResponse
     public var getCurrentUser: @Sendable () async throws -> User
-    public var updateCurrentUser: @Sendable (UpdateUserRequest) async throws -> Void
-    public var deleteCurrentUser: @Sendable () async throws -> Void
+    
+    // Check Operations
+    public var createCheck: @Sendable (CreateCheckRequest) async throws -> Check
+    public var getAllChecks: @Sendable () async throws -> [CheckPreview]
+    public var getCheck: @Sendable (String) async throws -> Check
+    public var deleteCheck: @Sendable (String) async throws -> Void
 }
 
 public extension DependencyValues {

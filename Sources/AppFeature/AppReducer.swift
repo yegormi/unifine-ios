@@ -1,10 +1,10 @@
 import AuthFeature
 import ComposableArchitecture
 import Dependencies
+import HomeFeature
 import OSLog
 import SharedModels
 import SplashFeature
-import TabsFeature
 
 private let logger = Logger(subsystem: "AppFeature", category: "AppReducer")
 
@@ -28,7 +28,7 @@ public struct AppReducer: Reducer, Sendable {
         @ReducerCaseIgnored
         case splash
         case login(Login)
-        case tabs(Tabs)
+        case home(Home)
     }
 
     @Dependency(\.apiClient) var api
@@ -45,12 +45,8 @@ public struct AppReducer: Reducer, Sendable {
         Reduce { state, action in
             switch action {
             case .destination(.login(.delegate(.loginSuccessful))):
-                state.destination = .tabs(Tabs.State())
+                state.destination = .home(Home.State())
                 return .none
-                
-//            case .destination(.login(.path(.register(.delegate(.registerSuccessful))))):
-//                state.destination = .tabs(Tabs.State())
-//                return .none
 
             case .destination:
                 return .none
@@ -68,7 +64,7 @@ public struct AppReducer: Reducer, Sendable {
                             let user = try await self.api.getCurrentUser()
                             self.session.authenticate(user)
                             logger.info("Logged in successfully!")
-                            await send(.changeToDestination(.tabs(Tabs.State())))
+                            await send(.changeToDestination(.home(Home.State())))
                         } else {
                             await send(.changeToDestination(.login(Login.State())))
                             logger.info("Did not find a stored ID token, showing login screen.")

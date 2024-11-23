@@ -3,13 +3,14 @@ import Foundation
 public struct APIErrorPayload: Equatable, Sendable {
     public enum Code: Equatable, Sendable {
         case internalError
-        case unauthorized
         case noAccessToken
         case invalidAccessToken
         case expiredAccessToken
         case entityNotFound
         case incorrectPassword
         case emailNotUnique
+        case notAuthor
+        case noPromptSpecified
     }
 
     public let code: Code

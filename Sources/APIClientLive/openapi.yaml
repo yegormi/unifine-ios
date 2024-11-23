@@ -1,5 +1,69 @@
 openapi: 3.0.0
 paths:
+  /signup:
+    post:
+      operationId: signup
+      summary: Sign up
+      tags:
+        - user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequestDto'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupResponseDto'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorDto'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorDto'
+  /login:
+    post:
+      operationId: login
+      summary: Log in
+      tags:
+        - user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequestDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponseDto'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorDto'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorDto'
   /me:
     get:
       operationId: getMe
@@ -22,33 +86,107 @@ paths:
                 $ref: '#/components/schemas/ApiErrorDto'
       security:
         - bearer: []
-    patch:
-      operationId: updateMe
-      summary: Update the current user
+  /checks:
+    post:
+      operationId: createCheck
+      summary: Create a check
       tags:
-        - user
+        - check
       parameters: []
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/UpdateUserDto'
+              $ref: '#/components/schemas/CreateCheckDto'
       responses:
-        '200':
+        '201':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckDto'
         '401':
           description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiErrorDto'
-    delete:
-      operationId: deleteMe
-      summary: Delete the current user
+      security:
+        - bearer: []
+    get:
+      operationId: getChecks
+      summary: Get all checks
       tags:
-        - user
+        - check
       parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CheckPreviewDto'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorDto'
+      security:
+        - bearer: []
+  /checks/{id}:
+    get:
+      operationId: getCheckById
+      summary: Get a check by id
+      tags:
+        - check
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckDto'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorDto'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorDto'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorDto'
+      security:
+        - bearer: []
+    delete:
+      operationId: deleteCheckById
+      summary: Delete a check by id
+      tags:
+        - check
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '204':
           description: ''
@@ -58,16 +196,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiErrorDto'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorDto'
       security:
         - bearer: []
 info:
-  title: UniFine API
-  description: REST API for UniFine
+  title: UniFine
+  description: ''
   version: '1.0'
   contact: {}
 tags: []
 servers:
-  - url: https://api.unifine.pp.ua
+  - url: https://unifine.eventbook.pp.ua
 components:
   securitySchemes:
     bearer:
@@ -75,6 +219,16 @@ components:
       bearerFormat: JWT
       type: http
   schemas:
+    SignupRequestDto:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
     UserDto:
       type: object
       properties:
@@ -84,31 +238,22 @@ components:
           description: The id of the user
         email:
           type: string
-          example: johndoe@example.com
-          format: email
-          description: The email of the user
-          nullable: true
-        fullName:
-          type: string
           example: John Doe
-          description: The full name of the user
-          nullable: true
-        phoneNumber:
-          type: string
-          example: '+1234567890'
-          description: The phone number of the user
-          nullable: true
-        avatar:
-          type: string
-          example: https://example.com/avatar.jpg
-          description: The avatar URL of the user
-          nullable: true
+          description: The name of the user
       required:
         - id
         - email
-        - fullName
-        - phoneNumber
-        - avatar
+    SignupResponseDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsIn
+        user:
+          $ref: '#/components/schemas/UserDto'
+      required:
+        - accessToken
+        - user
     ApiErrorDto:
       type: object
       properties:
@@ -118,9 +263,14 @@ components:
           example: entity-not-found
           enum:
             - internal
-            - unauthorized
+            - no-access-token
+            - invalid-access-token
+            - expired-access-token
             - entity-not-found
+            - incorrect-password
             - email-not-unique
+            - not-author
+            - no-prompt-specified
         message:
           type: string
           description: A human-readable message describing the error
@@ -132,11 +282,96 @@ components:
             entity: User
       required:
         - message
-    UpdateUserDto:
+    LoginRequestDto:
       type: object
       properties:
-        fullName:
+        email:
           type: string
-          example: John Doe
-          description: The full name of the user
-          nullable: true
+          example: example@example.com
+        password:
+          type: string
+          example: admin123
+      required:
+        - email
+        - password
+    LoginResponseDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsIn
+        user:
+          $ref: '#/components/schemas/UserDto'
+      required:
+        - accessToken
+        - user
+    CreateCheckDto:
+      type: object
+      properties:
+        topic:
+          type: string
+        style:
+          type: string
+        excludedWords:
+          type: string
+        prompt:
+          type: string
+        file:
+          type: string
+          format: binary
+    IssueDto:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        text:
+          type: string
+        message:
+          type: string
+        suggestion:
+          type: string
+        startIndex:
+          type: number
+        endIndex:
+          type: number
+      required:
+        - id
+        - type
+        - text
+        - message
+        - suggestion
+        - startIndex
+        - endIndex
+    CheckDto:
+      type: object
+      properties:
+        id:
+          type: string
+        prompt:
+          type: string
+        summary:
+          type: string
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/IssueDto'
+      required:
+        - id
+        - prompt
+        - summary
+        - issues
+    CheckPreviewDto:
+      type: object
+      properties:
+        id:
+          type: string
+        prompt:
+          type: string
+        summary:
+          type: string
+      required:
+        - id
+        - prompt
+        - summary

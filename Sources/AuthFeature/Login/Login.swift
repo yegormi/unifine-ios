@@ -68,6 +68,9 @@ public struct Login: Reducer {
         BindingReducer(action: \.view)
         Reduce { state, action in
             switch action {
+            case .path(.element(id: _, action: .register(.delegate(.registerSuccessful)))):
+                return .send(.delegate(.loginSuccessful))
+            
             case .path:
                 return .none
                 

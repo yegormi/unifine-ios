@@ -66,7 +66,7 @@ public struct RegisterView: View {
             Button {
                 send(.registerButtonTapped)
             } label: {
-                Text("Create Account")
+                Text("Create")
             }
             .buttonStyle(.primary(size: .fullWidth))
             .disabled(!self.store.isFormValid || self.store.isLoading)

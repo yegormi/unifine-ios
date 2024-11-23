@@ -30,20 +30,65 @@ extension APIClient: DependencyKey {
             ]
         )
 
-        return Self(
+        return APIClient(
+            signup: { request in
+                try await throwingUnderlyingError {
+                    try await client.signup(body: .json(request.toAPI()))
+                        .created
+                        .body
+                        .json
+                        .toDomain()
+                }
+            },
+            login: { request in
+                try await throwingUnderlyingError {
+                    try await client.login(body: .json(request.toAPI()))
+                        .ok
+                        .body
+                        .json
+                        .toDomain()
+                }
+            },
             getCurrentUser: {
                 try await throwingUnderlyingError {
-                    try await client.getMe().ok.body.json.toDomain()
+                    try await client.getMe()
+                        .ok
+                        .body
+                        .json
+                        .toDomain()
                 }
             },
-            updateCurrentUser: { request in
+            createCheck: { request in
                 try await throwingUnderlyingError {
-                    _ = try await client.updateMe(body: .json(request.toAPI())).ok
+                    try await client.createCheck(body: .multipartForm(request.toMultipartForm()))
+                        .created
+                        .body
+                        .json
+                        .toDomain()
                 }
             },
-            deleteCurrentUser: {
+            getAllChecks: {
                 try await throwingUnderlyingError {
-                    _ = try await client.deleteMe().noContent
+                    try await client.getChecks()
+                        .ok
+                        .body
+                        .json
+                        .map { $0.toDomain() }
+                }
+            },
+            getCheck: { id in
+                try await throwingUnderlyingError {
+                    try await client.getCheckById(path: .init(id: id))
+                        .ok
+                        .body
+                        .json
+                        .toDomain()
+                }
+            },
+            deleteCheck: { id in
+                try await throwingUnderlyingError {
+                    _ = try await client.deleteCheckById(path: .init(id: id))
+                        .noContent
                 }
             }
         )

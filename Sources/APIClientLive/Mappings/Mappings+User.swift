@@ -3,21 +3,37 @@ import Foundation
 import SharedModels
 
 extension Components.Schemas.UserDto {
-    func toDomain() -> User {
+    func toDomain() -> SharedModels.User {
         User(
             id: self.id,
-            email: self.email,
-            fullName: self.fullName,
-            phoneNumber: self.phoneNumber?.isEmpty == true ? nil : self.phoneNumber,
-            photoURL: self.avatar.flatMap(URL.init)
+            email: self.email
         )
     }
 }
 
-extension UpdateUserRequest {
-    func toAPI() -> Components.Schemas.UpdateUserDto {
-        Components.Schemas.UpdateUserDto(
-            fullName: self.fullName
-        )
+
+extension LoginRequest {
+    func toAPI() -> Components.Schemas.LoginRequestDto {
+        .init(email: self.email, password: self.password)
     }
 }
+
+extension Components.Schemas.LoginResponseDto {
+    func toDomain() -> AuthResponse {
+        .init(accessToken: self.accessToken, user: self.user.toDomain())
+    }
+}
+
+
+extension SignupRequest {
+    func toAPI() -> Components.Schemas.SignupRequestDto {
+        .init(email: self.email, password: self.password)
+    }
+}
+
+extension Components.Schemas.SignupResponseDto {
+    func toDomain() -> AuthResponse {
+        .init(accessToken: self.accessToken, user: self.user.toDomain())
+    }
+}
+
