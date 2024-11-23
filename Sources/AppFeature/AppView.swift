@@ -24,7 +24,7 @@ public struct AppView: View {
                 if let store = self.store.scope(state: \.destination.home, action: \.destination.home) {
                     NavigationStack {
                         HomeView(store: store)
-                            .navigationTitle("Checks")
+                            .navigationTitle("Home")
                             .toolbarTitleDisplayMode(.inlineLarge)
                     }
                 }
