@@ -17,7 +17,7 @@ public struct Login: Reducer, Sendable {
         var password = ""
         var isLoading = false
         var isFormValid: Bool {
-            self.email.isValidEmail && !self.password.isEmpty
+            self.email.isValidEmail && self.password.isValidPassword
         }
 
         @Presents var destination: Destination.State?
@@ -40,6 +40,7 @@ public struct Login: Reducer, Sendable {
 
         public enum Internal {
             case authResponse(Result<AuthResponse, Error>)
+            case sessionResponse(Result<Void, Error>)
         }
 
         public enum View: BindableAction {
@@ -69,8 +70,8 @@ public struct Login: Reducer, Sendable {
         BindingReducer(action: \.view)
         Reduce { state, action in
             switch action {
-            case .path(.element(id: _, action: .register(.delegate(.registerSuccessful)))):
-                return .send(.delegate(.loginSuccessful))
+            case let .path(.element(id: _, action: .register(.delegate(.registerSuccessful(accessToken))))):
+                return self.authenticate(with: accessToken, &state)
 
             case .path:
                 return .none
@@ -84,6 +85,15 @@ public struct Login: Reducer, Sendable {
             case let .internal(.authResponse(result)):
                 state.isLoading = false
 
+                switch result {
+                case let .success(response):
+                    return self.authenticate(with: response.accessToken, &state)
+                case let .failure(error):
+                    state.destination = .alert(.failedToAuth(error: error))
+                    return .none
+                }
+
+            case let .internal(.sessionResponse(result)):
                 switch result {
                 case .success:
                     return .send(.delegate(.loginSuccessful))
@@ -115,6 +125,16 @@ public struct Login: Reducer, Sendable {
             await send(.internal(.authResponse(Result {
                 let request = AuthRequest(email: state.email, password: state.password)
                 return try await self.api.login(request)
+            })))
+        }
+    }
+
+    private func authenticate(with accessToken: String, _: inout State) -> Effect<Action> {
+        .run { send in
+            await send(.internal(.sessionResponse(Result {
+                try self.session.setCurrentAccessToken(accessToken)
+                let user = try await self.api.getCurrentUser()
+                self.session.authenticate(user)
             })))
         }
     }

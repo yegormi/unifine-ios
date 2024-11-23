@@ -14,8 +14,26 @@ public struct HomeView: View {
     }
 
     public var body: some View {
-        VStack {
+        ScrollView {
             EmptyTabView()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentMargins(.all, 16, for: .scrollContent)
+        .onAppear {
+            send(.onAppear)
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+//                    send(.settingsButtonTapped)
+                } label: {
+                    Image(systemName: "gearshape.fill")
+                        .resizable()
+                        .frame(width: 22, height: 22)
+                        .padding(13)
+                        .clipShape(Circle())
+                }
+            }
         }
         .onFirstAppear {
             send(.onFirstAppear)

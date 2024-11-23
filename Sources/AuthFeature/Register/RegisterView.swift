@@ -51,15 +51,6 @@ public struct RegisterView: View {
                     }
                 }
                 .padding(.bottom, 14)
-
-                // Privacy policy and terms text could go here if needed
-                Group {
-                    Text("By creating an account, you agree to our Terms of Service and Privacy Policy")
-                        .font(.system(size: 13))
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.leading)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
         .overlay(alignment: .bottom) {

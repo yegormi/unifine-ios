@@ -16,7 +16,7 @@ public struct Register: Reducer, Sendable {
         var confirmPassword = ""
         var isLoading = false
         var isFormValid: Bool {
-            self.email.isValidEmail && !self.password.isEmpty && self.password == self.confirmPassword
+            self.email.isValidEmail && self.password.isValidPassword && self.password == self.confirmPassword
         }
 
         @Presents var destination: Destination.State?
@@ -29,7 +29,7 @@ public struct Register: Reducer, Sendable {
         case view(View)
 
         public enum Delegate {
-            case registerSuccessful
+            case registerSuccessful(String)
         }
 
         public enum Internal {
@@ -67,8 +67,8 @@ public struct Register: Reducer, Sendable {
                 state.isLoading = false
 
                 switch result {
-                case .success:
-                    return .send(.delegate(.registerSuccessful))
+                case let .success(response):
+                    return .send(.delegate(.registerSuccessful(response.accessToken)))
                 case let .failure(error):
                     state.destination = .alert(.failedToAuth(error: error))
                     return .none

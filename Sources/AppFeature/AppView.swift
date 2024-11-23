@@ -22,7 +22,11 @@ public struct AppView: View {
                 }
             case .home:
                 if let store = self.store.scope(state: \.destination.home, action: \.destination.home) {
-                    HomeView(store: store)
+                    NavigationStack {
+                        HomeView(store: store)
+                            .navigationTitle("Checks")
+                            .toolbarTitleDisplayMode(.inlineLarge)
+                    }
                 }
             }
         }
