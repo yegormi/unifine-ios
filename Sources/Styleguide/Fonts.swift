@@ -30,6 +30,6 @@ public extension Font {
     }
 
     static var titleLarge: Self {
-        .system(size: 18, weight: .semibold)
+        .system(size: 20, weight: .semibold)
     }
 }

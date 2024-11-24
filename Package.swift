@@ -94,6 +94,7 @@ let package = Package(
             name: "HomeFeature",
             dependencies: [
                 "APIClient",
+                "SessionClient",
                 "SharedModels",
                 "Styleguide",
                 "SwiftHelpers",

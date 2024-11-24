@@ -1,19 +1,28 @@
 import APIClient
 import ComposableArchitecture
 import Foundation
+import OSLog
+import SessionClient
 import SharedModels
+
+private let logger = Logger(subsystem: "HomeFeature", category: "Home")
 
 @Reducer
 public struct Home: Reducer, Sendable {
     @ObservableState
     public struct State: Equatable {
+        var path: StackState<Path.State>
+
         var checks: [CheckPreview]?
         var isLoading = false
 
-        public init() {}
+        public init() {
+            self.path = StackState<Path.State>()
+        }
     }
 
     public enum Action: ViewAction {
+        case path(StackAction<Path.State, Path.Action>)
         case delegate(Delegate)
         case `internal`(Internal)
         case view(View)
@@ -28,13 +37,21 @@ public struct Home: Reducer, Sendable {
             case binding(BindingAction<Home.State>)
             case onFirstAppear
             case task
+            case addCheckButtonTapped
             case logoutButtonTapped
+            case checkTapped(CheckPreview)
         }
+    }
+
+    @Reducer(state: .equatable, .sendable)
+    public enum Path {
+        case checkSetup(CheckSetup)
+//        case checkInput(CheckInput)
     }
 
     @Dependency(\.apiClient) var api
 
-    @Dependency(\.uuid) var uuid
+    @Dependency(\.session) var session
 
     public init() {}
 
@@ -43,10 +60,15 @@ public struct Home: Reducer, Sendable {
 
         Reduce { state, action in
             switch action {
+            case .path:
+                return .none
+
             case .delegate:
                 return .none
 
             case let .internal(.checksResponse(.success(checks))):
+                state.isLoading = false
+
                 state.checks = checks
                 return .none
 
@@ -62,14 +84,31 @@ public struct Home: Reducer, Sendable {
             case .view(.task):
                 return self.reload(&state)
 
+            case .view(.addCheckButtonTapped):
+                state.path.append(.checkSetup(CheckSetup.State()))
+                return .none
+
             case .view(.logoutButtonTapped):
+                return .run { _ in
+                    do {
+                        try self.session.logout()
+                    } catch {
+                        logger.error("Failed to log out: \(error)")
+                    }
+                }
+
+            case let .view(.checkTapped(check)):
                 return .none
             }
         }
+        .forEach(\.path, action: \.path)
     }
 
     private func reload(_ state: inout State) -> Effect<Action> {
-        .run { [state] send in
+        guard !state.isLoading else { return .none }
+        state.isLoading = true
+
+        return .run { send in
             await withDiscardingTaskGroup { group in
                 group.addTask {
                     await send(.internal(.checksResponse(Result {

@@ -14,38 +14,60 @@ public struct HomeView: View {
     }
 
     public var body: some View {
-        ScrollView(.vertical) {
-            if let checks = self.store.checks {
-                LazyVStack(spacing: 14) {
-                    ForEach(checks) { check in
-                        Button {
-//                            send(.courseTapped(course))
-                        } label: {
-                            CheckCard(check: check)
+        NavigationStack(path: self.$store.scope(state: \.path, action: \.path)) {
+            ScrollView(.vertical) {
+                if let checks = store.checks {
+                    LazyVStack(spacing: 14) {
+                        ForEach(checks) { check in
+                            Button {
+                                send(.checkTapped(check))
+                            } label: {
+                                CheckCard(check: check)
+                            }
                         }
                     }
+                } else if self.store.isLoading {
+                    ProgressView()
+                } else {
+                    Text("There are no checks for now")
                 }
-            } else if self.store.isLoading {
-                ProgressView()
-            } else {
-                Text("There are no checks for now")
             }
-        }
-        .refreshable { await send(.task).finish() }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .contentMargins(.all, 16, for: .scrollContent)
-        .task { await send(.task).finish() }
-        .onFirstAppear { send(.onFirstAppear) }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    send(.logoutButtonTapped)
-                } label: {
-                    Image(systemName: "iphone.and.arrow.right.outward")
-                        .resizable()
-                        .frame(width: 22, height: 22)
-                        .padding(13)
-                        .clipShape(Circle())
+            .navigationTitle("Home")
+            .toolbarTitleDisplayMode(.inlineLarge)
+            .contentMargins(.all, 16, for: .scrollContent)
+            .refreshable { await send(.task).finish() }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .task { await send(.task).finish() }
+            .onFirstAppear { send(.onFirstAppear) }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        send(.addCheckButtonTapped)
+                    } label: {
+                        Image(systemName: "plus")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .clipShape(Rectangle())
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        send(.logoutButtonTapped)
+                    } label: {
+                        Image(systemName: "iphone.and.arrow.right.outward")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .clipShape(Rectangle())
+                    }
+                }
+            }
+        } destination: { store in
+            switch store.state {
+            case .checkSetup:
+                if let store = store.scope(state: \.checkSetup, action: \.checkSetup) {
+                    CheckSetupView(store: store)
+                        .navigationTitle("Setup")
+                        .toolbarTitleDisplayMode(.inlineLarge)
                 }
             }
         }

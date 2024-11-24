@@ -50,7 +50,7 @@ extension CreateCheckRequest {
             let topicData = self.topic.data(using: .utf8),
             let styleData = self.style.data(using: .utf8),
             let excludedWordsData = self.excludedWords.data(using: .utf8),
-            let promptData = self.prompt.data(using: .utf8)
+            let prompt, let promptData = prompt.data(using: .utf8)
         else {
             throw DataConversionError()
         }

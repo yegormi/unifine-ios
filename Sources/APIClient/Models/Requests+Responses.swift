@@ -15,15 +15,15 @@ public struct CreateCheckRequest: Sendable {
     public let topic: String
     public let style: String
     public let excludedWords: String
-    public let prompt: String
-    public let file: Data
+    public let prompt: String?
+    public let file: Data?
 
     public init(
         topic: String,
         style: String,
         excludedWords: String,
-        prompt: String,
-        file: Data
+        prompt: String? = nil,
+        file: Data? = nil
     ) {
         self.topic = topic
         self.style = style
