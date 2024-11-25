@@ -19,6 +19,10 @@ public struct CheckSetup: Reducer, Sendable {
         var style: Style = .neutral
         var excludedWords = ""
 
+        var isFormValid: Bool {
+            !self.topic.isEmpty
+        }
+
         public init() {}
     }
 

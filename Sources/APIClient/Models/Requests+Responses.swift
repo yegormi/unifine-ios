@@ -11,7 +11,7 @@ public struct AuthRequest: Sendable {
     }
 }
 
-public struct CreateCheckRequest: Sendable {
+public struct CreateCheckRequest: Sendable, Equatable {
     public let topic: String
     public let style: String
     public let excludedWords: String

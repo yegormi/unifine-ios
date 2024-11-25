@@ -46,7 +46,7 @@ public struct Home: Reducer, Sendable {
     @Reducer(state: .equatable, .sendable)
     public enum Path {
         case checkSetup(CheckSetup)
-//        case checkInput(CheckInput)
+        case checkInput(CheckInput)
     }
 
     @Dependency(\.apiClient) var api
@@ -60,6 +60,10 @@ public struct Home: Reducer, Sendable {
 
         Reduce { state, action in
             switch action {
+            case let .path(.element(id: _, action: .checkSetup(.delegate(.didFinishSetup(checkRequest))))):
+                state.path.append(.checkInput(CheckInput.State(request: checkRequest)))
+                return .none
+
             case .path:
                 return .none
 

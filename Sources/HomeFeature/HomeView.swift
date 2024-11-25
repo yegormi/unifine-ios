@@ -69,6 +69,12 @@ public struct HomeView: View {
                         .navigationTitle("Setup")
                         .toolbarTitleDisplayMode(.inlineLarge)
                 }
+            case .checkInput:
+                if let store = store.scope(state: \.checkInput, action: \.checkInput) {
+                    CheckInputView(store: store)
+                        .navigationTitle("Input")
+                        .toolbarTitleDisplayMode(.inlineLarge)
+                }
             }
         }
     }

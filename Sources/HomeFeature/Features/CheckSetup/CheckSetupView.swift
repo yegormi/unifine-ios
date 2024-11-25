@@ -68,13 +68,14 @@ public struct CheckSetupView: View {
                 }
             }
         }
-        .padding(30)
+        .contentMargins(.all, 16, for: .scrollContent)
         .overlay(alignment: .bottom) {
             Button {
                 send(.nextButtonTapped)
             } label: {
                 Text("Next")
             }
+            .disabled(!self.store.isFormValid)
             .buttonStyle(.primary(size: .fullWidth))
             .padding(15)
             .padding(.horizontal, 15)

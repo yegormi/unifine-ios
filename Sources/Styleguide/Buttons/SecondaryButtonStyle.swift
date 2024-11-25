@@ -26,24 +26,15 @@ public struct SecondaryButtonStyle: ButtonStyle {
             .label
             .frame(maxWidth: self.size == .fullWidth ? .infinity : nil)
             .font(.titleRegular)
-            .foregroundStyle(
-                self.isEnabled ?
-                    (self.colorScheme == .dark ? Color.purple400 : Color.purple500) :
-                    (self.colorScheme == .dark ? Color.neutral600 : Color.neutral500)
-            )
+            .foregroundStyle(Color.primary)
             .padding(.vertical, self.size.verticalPadding)
             .padding(.horizontal, self.size.horizontalPadding)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(
-                        self.isEnabled ?
-                            (self.colorScheme == .dark ? Color.purple400 : Color.purple500) :
-                            (self.colorScheme == .dark ? Color.neutral600 : Color.neutral500),
-                        lineWidth: 2
-                    )
+                    .strokeBorder(Color.primary, lineWidth: 2)
                     .background(
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(self.colorScheme == .dark ? Color.black.opacity(0.6) : Color.neutral0)
+                            .fill(Color(UIColor.systemBackground))
                     )
             )
             .scaleEffect(configuration.isPressed ? 0.95 : 1)
