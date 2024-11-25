@@ -6,6 +6,8 @@ import SessionClient
 import SharedModels
 import UniformTypeIdentifiers
 
+private let logger = Logger(subsystem: "CheckInput", category: "CheckInput")
+
 @Reducer
 public struct CheckInput: Reducer, Sendable {
     @ObservableState
@@ -32,7 +34,7 @@ public struct CheckInput: Reducer, Sendable {
         case view(View)
 
         public enum Delegate {
-            case didFinishInput(String)
+            case didReceiveSummary(Check)
         }
 
         public enum Internal {
@@ -61,8 +63,17 @@ public struct CheckInput: Reducer, Sendable {
             case .delegate:
                 return .none
 
-            case .internal:
-                return .none
+            case let .internal(.uploadResponse(result)):
+                state.isUploading = false
+
+                switch result {
+                case let .success(check):
+                    logger.info("Successfully recieved check")
+                    return .send(.delegate(.didReceiveSummary(check)))
+                case .failure:
+                    logger.error("Failed to upload check")
+                    return .none
+                }
 
             case .view(.binding):
                 return .none
@@ -72,8 +83,28 @@ public struct CheckInput: Reducer, Sendable {
                 return .none
 
             case .view(.submitButtonTapped):
-                guard !state.text.isEmpty || state.attachment != nil else { return .none }
-                return .send(.delegate(.didFinishInput(state.text)))
+                guard state.isFormValid else { return .none }
+                state.isUploading = true
+
+                if let attachment = state.attachment {
+                    let request = state.request.withFile(attachment)
+
+                    return .run { send in
+                        await send(.internal(.uploadResponse(Result {
+                            try await self.api.createCheck(request)
+                        })))
+                    }
+                } else if !state.text.isEmpty {
+                    let request = state.request.withPromptText(state.text)
+
+                    return .run { send in
+                        await send(.internal(.uploadResponse(Result {
+                            try await self.api.createCheck(request)
+                        })))
+                    }
+                }
+
+                return .none
 
             case let .view(.fileAttached(attachment)):
                 state.attachment = attachment

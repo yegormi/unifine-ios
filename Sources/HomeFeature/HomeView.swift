@@ -34,7 +34,7 @@ public struct HomeView: View {
             }
             .navigationTitle("Home")
             .toolbarTitleDisplayMode(.inlineLarge)
-            .contentMargins(.all, 16, for: .scrollContent)
+            .contentMargins(.all, 20, for: .scrollContent)
             .refreshable { await send(.task).finish() }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .task { await send(.task).finish() }
@@ -72,7 +72,13 @@ public struct HomeView: View {
             case .checkInput:
                 if let store = store.scope(state: \.checkInput, action: \.checkInput) {
                     CheckInputView(store: store)
-                        .navigationTitle("Input")
+                        .navigationTitle("Upload your work")
+                        .toolbarTitleDisplayMode(.inlineLarge)
+                }
+            case .checkResult:
+                if let store = store.scope(state: \.checkResult, action: \.checkResult) {
+                    CheckResultView(store: store)
+                        .navigationTitle("Summary")
                         .toolbarTitleDisplayMode(.inlineLarge)
                 }
             }

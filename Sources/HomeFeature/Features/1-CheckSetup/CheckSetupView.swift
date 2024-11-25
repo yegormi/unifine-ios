@@ -68,7 +68,7 @@ public struct CheckSetupView: View {
                 }
             }
         }
-        .contentMargins(.all, 16, for: .scrollContent)
+        .contentMargins(.all, 20, for: .scrollContent)
         .overlay(alignment: .bottom) {
             Button {
                 send(.nextButtonTapped)
@@ -77,11 +77,10 @@ public struct CheckSetupView: View {
             }
             .disabled(!self.store.isFormValid)
             .buttonStyle(.primary(size: .fullWidth))
-            .padding(15)
-            .padding(.horizontal, 15)
+            .padding()
             .background(
                 Rectangle()
-                    .fill(Color.orangePrimary.opacity(0.2))
+                    .fill(Color(UIColor.systemBackground))
                     .clipShape(
                         .rect(
                             topLeadingRadius: 14,

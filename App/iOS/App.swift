@@ -39,6 +39,7 @@ struct EventBookApp: App {
     var body: some Scene {
         WindowGroup {
             AppView(store: self.store)
+                .preferredColorScheme(.light)
                 .scrollIndicators(.never)
         }
     }

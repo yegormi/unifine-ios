@@ -4,8 +4,15 @@ import Foundation
 
 public struct Check: Sendable, Equatable, Identifiable {
     public struct Issue: Sendable, Equatable, Identifiable {
+        public enum IssueType: String, Equatable, Sendable, Codable {
+            case grammar
+            case vocabulary
+            case style
+            case tone
+        }
+
         public let id: String
-        public let type: String
+        public let type: IssueType
         public let text: String
         public let message: String
         public let suggestion: String
@@ -14,7 +21,7 @@ public struct Check: Sendable, Equatable, Identifiable {
 
         public init(
             id: String,
-            type: String,
+            type: IssueType,
             text: String,
             message: String,
             suggestion: String,
@@ -79,7 +86,7 @@ public struct CheckPreview: Sendable, Equatable, Identifiable {
 public extension Check.Issue {
     static let mock = Self(
         id: "mock-issue-id",
-        type: "grammar",
+        type: .grammar,
         text: "mock issue text",
         message: "This is a mock issue message",
         suggestion: "Here's a mock suggestion",

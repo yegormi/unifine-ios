@@ -31,6 +31,7 @@ public struct Home: Reducer, Sendable {
 
         public enum Internal {
             case checksResponse(Result<[CheckPreview], Error>)
+            case selectedCheckResponse(Result<Check, Error>)
         }
 
         public enum View: BindableAction {
@@ -47,6 +48,7 @@ public struct Home: Reducer, Sendable {
     public enum Path {
         case checkSetup(CheckSetup)
         case checkInput(CheckInput)
+        case checkResult(CheckResult)
     }
 
     @Dependency(\.apiClient) var api
@@ -64,6 +66,10 @@ public struct Home: Reducer, Sendable {
                 state.path.append(.checkInput(CheckInput.State(request: checkRequest)))
                 return .none
 
+            case let .path(.element(id: _, action: .checkInput(.delegate(.didReceiveSummary(check))))):
+                state.path.append(.checkResult(CheckResult.State(check: check)))
+                return .none
+
             case .path:
                 return .none
 
@@ -74,6 +80,10 @@ public struct Home: Reducer, Sendable {
                 state.isLoading = false
 
                 state.checks = checks
+                return .none
+
+            case let .internal(.selectedCheckResponse(.success(check))):
+                state.path.append(.checkResult(CheckResult.State(check: check)))
                 return .none
 
             case .internal:
@@ -102,7 +112,11 @@ public struct Home: Reducer, Sendable {
                 }
 
             case let .view(.checkTapped(check)):
-                return .none
+                return .run { send in
+                    await send(.internal(.selectedCheckResponse(Result {
+                        try await self.api.getCheck(check.id)
+                    })))
+                }
             }
         }
         .forEach(\.path, action: \.path)

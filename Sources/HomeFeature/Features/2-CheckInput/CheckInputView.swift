@@ -57,17 +57,18 @@ public struct CheckInputView: View {
 
                     TextEditor(text: self.$store.text)
                         .disabled(self.store.attachment != nil)
-                        .opacity(self.store.attachment != nil ? 0.5 : 1)
                         .frame(minHeight: 200)
                         .scrollContentBackground(.hidden)
                         .background(
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                .opacity(self.store.attachment != nil ? 0.5 : 1)
                         )
                         .overlay(
                             Group {
                                 if self.store.text.isEmpty {
                                     Text("Enter text to check")
+                                        .opacity(self.store.attachment != nil ? 0.4 : 1)
                                         .foregroundStyle(.secondary)
                                         .padding(.leading, 5)
                                         .padding(.top, 8)
@@ -77,8 +78,8 @@ public struct CheckInputView: View {
                         )
                 }
             }
-            .padding(40)
         }
+        .contentMargins(.all, 20, for: .scrollContent)
         .sheet(isPresented: self.$store.showingDocumentPicker) {
             DocumentPicker(
                 types: [.pdf],
@@ -107,12 +108,12 @@ public struct CheckInputView: View {
                     Text("Upload")
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.primary(size: .fullWidth))
                 .disabled(!self.store.isFormValid)
-                .padding(15)
+                .buttonStyle(.primary(size: .fullWidth))
+                .padding()
                 .background(
                     Rectangle()
-                        .fill(Color.orangePrimary.opacity(0.2))
+                        .fill(Color(UIColor.systemBackground))
                         .clipShape(
                             .rect(
                                 topLeadingRadius: 14,
