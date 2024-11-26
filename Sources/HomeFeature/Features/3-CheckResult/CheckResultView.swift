@@ -37,6 +37,7 @@ public struct CheckResultView: View {
 
             if let matches = self.store.matches, matches.isEmpty {
                 Text("No matches found")
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .foregroundStyle(Color.primary)
                     .font(.system(size: 26, weight: .semibold))
                     .padding(20)
@@ -45,6 +46,7 @@ public struct CheckResultView: View {
             }
         }
         .padding(.horizontal, 20)
+        .padding(.bottom, 20)
         .sheet(
             item: self.$store.scope(state: \.destination?.issueDetail, action: \.destination.issueDetail)
         ) { store in

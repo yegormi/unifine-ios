@@ -64,7 +64,12 @@ public struct CheckResult: Reducer, Sendable {
                 switch result {
                 case let .success(matches):
                     state.matches = matches
-                    state.destination = .matchesDetail(MatchesDetail.State(matches: matches))
+                    if !matches.isEmpty {
+                        logger.info("Found \(matches.count) matches")
+                        state.destination = .matchesDetail(MatchesDetail.State(matches: matches))
+                    } else {
+                        logger.info("No matches found")
+                    }
                     return .none
                 case let .failure(error):
                     logger.error("Failed to check for plagiarism: \(error)")
