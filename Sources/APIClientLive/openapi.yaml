@@ -204,6 +204,30 @@ paths:
                 $ref: '#/components/schemas/ApiErrorDto'
       security:
         - bearer: []
+  /checks/{checkId}/matches:
+    post:
+      operationId: getMatchesForCheck
+      summary: Get matches for a check
+      description: Get matches for a check
+      tags:
+        - match
+      parameters:
+        - name: checkId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MatchDto'
+      security:
+        - bearer: []
 info:
   title: UniFine
   description: ''
@@ -355,6 +379,8 @@ components:
           type: string
         summary:
           type: string
+        aiScore:
+          type: number
         issues:
           type: array
           items:
@@ -367,6 +393,7 @@ components:
         - prompt
         - title
         - summary
+        - aiScore
         - issues
         - createdAt
     CheckPreviewDto:
@@ -386,3 +413,16 @@ components:
         - title
         - summary
         - createdAt
+    MatchDto:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+        score:
+          type: number
+      required:
+        - id
+        - url
+        - score

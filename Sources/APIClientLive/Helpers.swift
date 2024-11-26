@@ -40,7 +40,7 @@ private struct StringDateParsingError: Error {}
 
 private let dateOnlyFormatter = {
     let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd"
+    formatter.dateFormat = "dd.MM.yyyy"
     formatter.timeZone = .autoupdatingCurrent
     return formatter
 }()

@@ -1,4 +1,5 @@
 import SharedModels
+import Styleguide
 import SwiftUI
 
 public struct CheckCard: View {
@@ -12,6 +13,8 @@ public struct CheckCard: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(self.check.title)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .lineLimit(1)
                     .foregroundStyle(.black)
                     .font(.headline)
                     .fontWeight(.semibold)
@@ -19,15 +22,16 @@ public struct CheckCard: View {
 
                 Spacer()
 
-                Text(self.check.createdAt, format: .dateTime.day().month().year())
+                Text(self.check.createdAt, format: self.dateStyle)
                     .font(.subheadline)
                     .foregroundStyle(.black)
             }
 
             Text(self.check.summary)
+                .multilineTextAlignment(.leading)
+                .lineLimit(2)
                 .font(.subheadline)
                 .foregroundStyle(.gray)
-                .lineLimit(1)
                 .truncationMode(.tail)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -35,8 +39,12 @@ public struct CheckCard: View {
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.black, lineWidth: 1)
-                .background(Color.white)
+                .background(Color.orangeBackground)
         )
+    }
+
+    var dateStyle: Date.FormatStyle {
+        .dateTime.day(.twoDigits).month(.twoDigits).year(.extended())
     }
 }
 

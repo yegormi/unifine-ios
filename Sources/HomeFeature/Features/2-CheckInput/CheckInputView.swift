@@ -27,7 +27,7 @@ public struct CheckInputView: View {
                                     .foregroundStyle(.secondary)
                             }
                         }
-                        .padding()
+                        .padding(12)
                         .background(
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(Color.primary, lineWidth: 1)
@@ -36,16 +36,19 @@ public struct CheckInputView: View {
                         Button {
                             send(.uploadButtonTapped)
                         } label: {
-                            HStack {
-                                Image(systemName: "doc.fill")
+                            HStack(spacing: 0) {
+                                Image(systemName: "document")
+                                    .padding(.trailing, 5)
                                 Text("Upload file")
-                                Text("(pdf only)")
-                                    .foregroundStyle(.secondary)
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .padding(.trailing, 4)
+                                Text("(pdf only*)")
+                                    .font(.system(size: 10, weight: .semibold))
                                 Spacer()
                             }
                         }
                         .disabled(!self.store.text.isEmpty)
-                        .padding()
+                        .padding(12)
                         .background(
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(Color.primary, lineWidth: 1)
@@ -53,11 +56,12 @@ public struct CheckInputView: View {
                     }
 
                     Text("or")
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.primary)
+                        .bold()
 
                     TextEditor(text: self.$store.text)
                         .disabled(self.store.attachment != nil)
-                        .frame(minHeight: 200)
+                        .frame(minHeight: 300)
                         .scrollContentBackground(.hidden)
                         .background(
                             RoundedRectangle(cornerRadius: 10)
@@ -95,6 +99,7 @@ public struct CheckInputView: View {
                 }
             }
         }
+        .padding(.bottom, 100)
         .overlay(alignment: .bottom) {
             if self.store.isUploading {
                 ProgressView()

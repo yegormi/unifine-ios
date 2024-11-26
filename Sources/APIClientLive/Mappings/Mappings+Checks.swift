@@ -14,6 +14,7 @@ extension Components.Schemas.CheckDto {
             prompt: self.prompt,
             title: self.title,
             summary: self.summary,
+            aiScore: self.aiScore,
             issues: self.issues.map { $0.toDomain() },
             createdAt: self.createdAt
         )

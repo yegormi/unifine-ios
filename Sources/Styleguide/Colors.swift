@@ -1,8 +1,6 @@
 import SwiftUI
 
 public extension Color {
-    static let green500 = Color(.green500)
-
     static let neutral0 = Color(.neutral0)
     static let neutral50 = Color(.neutral50)
     static let neutral100 = Color(.neutral100)
@@ -30,6 +28,14 @@ public extension Color {
     static let red600 = Color(.red600)
     static let textFieldBackground = Color(.textFieldBackground)
 
+    static let orangeBackground = Color(.orangeBackground)
     static let orangePrimary = Color(.orangePrimary)
     static let orangeSecondary = Color(.orangeSecondary)
+
+    static let greenPrimary = Color(.greenPrimary)
+
+    static let redMarker = Color(.redMarker)
+    static let blueMarker = Color(.blueMarker)
+    static let orangeMarker = Color(.orangeMarker)
+    static let purpleMarker = Color(.purpleMarker)
 }

@@ -69,6 +69,7 @@ public struct CheckSetupView: View {
             }
         }
         .contentMargins(.all, 20, for: .scrollContent)
+        .padding(.bottom, 100)
         .overlay(alignment: .bottom) {
             Button {
                 send(.nextButtonTapped)

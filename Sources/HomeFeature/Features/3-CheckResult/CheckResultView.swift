@@ -6,11 +6,11 @@ import Styleguide
 import SwiftHelpers
 import SwiftUI
 import SwiftUIHelpers
-import UniformTypeIdentifiers
 
 @ViewAction(for: CheckResult.self)
 public struct CheckResultView: View {
     @Bindable public var store: StoreOf<CheckResult>
+    @State private var showingIssueSheet = false
 
     public init(store: StoreOf<CheckResult>) {
         self.store = store
@@ -19,15 +19,20 @@ public struct CheckResultView: View {
     public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-//                titleSection
+//                self.titleSection
                 self.highlightedTextSection
-                self.issuesSection
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 24)
+        }
+        .sheet(isPresented: self.$showingIssueSheet) {
+            if let selectedIssue = store.selectedIssue {
+                IssueDetailSheet(issue: selectedIssue)
+                    .presentationDetents([.medium])
+                    .presentationDragIndicator(.visible)
             }
         }
-        .padding()
     }
-
-    // MARK: - View Components
 
     private var titleSection: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -41,150 +46,18 @@ public struct CheckResultView: View {
     }
 
     private var highlightedTextSection: some View {
-        ScrollView {
-            Text(self.attributedText())
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.secondary.opacity(0.1))
-                )
+        InteractiveTextView(check: self.store.check) { issue in
+            self.showingIssueSheet = true
+            send(.issueSelected(issue))
         }
-    }
-
-    private var issuesSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Issues")
-                .font(.headline)
-
-            self.issuesList
-        }
-    }
-
-    private var issuesList: some View {
-        ForEach(self.store.check.issues) { issue in
-            IssueCard(
-                issue: issue,
-                isSelected: self.store.selectedIssue?.id == issue.id,
-                color: self.color(for: issue.type)
-            )
-            .onTapGesture {
-                send(.issueSelected(issue))
-            }
-        }
-    }
-
-    // MARK: - Helper Functions
-
-    private func color(for type: Check.Issue.IssueType) -> Color {
-        switch type {
-        case .grammar:
-            .red.opacity(0.3)
-        case .vocabulary:
-            .blue.opacity(0.3)
-        case .style:
-            .orange.opacity(0.3)
-        case .tone:
-            .purple.opacity(0.3)
-        }
-    }
-
-    private func attributedText() -> AttributedString {
-        var text = AttributedString(store.check.prompt)
-
-        let sortedIssues = self.store.check.issues.sorted { $0.startIndex < $1.startIndex }
-
-        for issue in sortedIssues {
-            guard issue.startIndex >= 0, issue.endIndex <= text.characters.count else { continue }
-
-            guard let range = range(from: issue.startIndex, to: issue.endIndex, in: text) else { continue }
-            text[range].backgroundColor = self.color(for: issue.type)
-        }
-
-        return text
-    }
-
-    private func index(for offset: Int, in text: AttributedString) -> AttributedString.Index? {
-        guard offset >= 0 else { return nil }
-        return text.index(text.startIndex, offsetByCharacters: offset)
-    }
-
-    private func range(
-        from startOffset: Int,
-        to endOffset: Int,
-        in text: AttributedString
-    ) -> Range<AttributedString.Index>? {
-        guard
-            let start = index(for: startOffset, in: text),
-            let end = index(for: endOffset, in: text)
-        else { return nil }
-        return start ..< end
+        .frame(maxWidth: .infinity, minHeight: 300, maxHeight: .infinity)
     }
 }
 
-// MARK: - IssueCard View
-
-private struct IssueCard: View {
-    let issue: Check.Issue
-    let isSelected: Bool
-    let color: Color
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            self.issueHeader
-            self.issueMessage
-            if self.isSelected {
-                self.issueSuggestion
-            }
+#Preview {
+    CheckResultView(
+        store: Store(initialState: CheckResult.State(check: .mockTechnical)) {
+            CheckResult()
         }
-        .padding()
-        .background(
-            self.cardBackground
-        )
-    }
-
-    private var issueHeader: some View {
-        HStack {
-            Circle()
-                .fill(self.color)
-                .frame(width: 12, height: 12)
-
-            Text(self.issue.type.rawValue.capitalized)
-                .font(.subheadline)
-                .fontWeight(.medium)
-
-            Spacer()
-
-            Text("View in text")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
-    }
-
-    private var issueMessage: some View {
-        Text(self.issue.message)
-            .font(.body)
-    }
-
-    private var issueSuggestion: some View {
-        HStack {
-            Text("Suggestion:")
-                .font(.subheadline)
-                .fontWeight(.medium)
-
-            Text(self.issue.suggestion)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-        }
-        .padding(.top, 4)
-    }
-
-    private var cardBackground: some View {
-        RoundedRectangle(cornerRadius: 12)
-            .fill(Color.secondary.opacity(0.1))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(self.isSelected ? self.color : Color.clear, lineWidth: 2)
-            )
-    }
+    )
 }

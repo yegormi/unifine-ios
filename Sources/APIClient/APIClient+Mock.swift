@@ -10,6 +10,7 @@ public extension APIClient {
             [.mock1, .mock2]
         },
         getCheck: { _ in .mock },
-        deleteCheck: { _ in }
+        deleteCheck: { _ in },
+        getMatches: { _ in .init() }
     )
 }

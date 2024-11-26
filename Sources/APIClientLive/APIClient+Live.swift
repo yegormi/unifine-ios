@@ -90,6 +90,15 @@ extension APIClient: DependencyKey {
                     _ = try await client.deleteCheckById(path: .init(id: id))
                         .noContent
                 }
+            },
+            getMatches: { id in
+                try await throwingUnderlyingError {
+                    try await client.getMatchesForCheck(path: .init(checkId: id))
+                        .ok
+                        .body
+                        .json
+                        .map { $0.toDomain() }
+                }
             }
         )
     }
