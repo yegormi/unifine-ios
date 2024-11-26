@@ -140,6 +140,150 @@ extension CheckPreview: Codable {}
 
 // Create extension for mocking
 public extension Check {
+    static let mockChatO1 = Check(
+        id: UUID().uuidString,
+        prompt: """
+        Hello,
+        My name is Susan. I'm forteen and I life in Germany. My hobbys are go to discos, sometimes I hear music in the radio. In the summer I go bathing in a lake. I haven't any brothers or sisters. We take busses to scool. I visit year 9 at my school. My birthday is on Friday. I hope I will become a new guitar.
+        I'm looking forward to get a e-mail from you.
+
+        Yours,
+        Susan
+        """,
+        title: "Introduction Letter from Susan",
+        summary: "Susan, a fourteen-year-old girl from Germany, introduces herself by sharing her hobbies, family situation, school life, and her upcoming birthday wish for a new guitar.",
+        aiScore: 78.0,
+        issues: [
+            .init(
+                id: UUID().uuidString,
+                type: .vocabulary,
+                text: "forteen",
+                message: "The word 'forteen' is misspelled.",
+                suggestion: "fourteen",
+                startIndex: 29,
+                endIndex: 35
+            ),
+            .init(
+                id: UUID().uuidString,
+                type: .grammar,
+                text: "I life in Germany.",
+                message: "Incorrect verb 'life' used instead of 'live'.",
+                suggestion: "I live in Germany.",
+                startIndex: 40,
+                endIndex: 57
+            ),
+            .init(
+                id: UUID().uuidString,
+                type: .vocabulary,
+                text: "hobbys",
+                message: "The plural of 'hobby' is 'hobbies'.",
+                suggestion: "hobbies",
+                startIndex: 63,
+                endIndex: 68
+            ),
+            .init(
+                id: UUID().uuidString,
+                type: .grammar,
+                text: "are go to discos",
+                message: "Incorrect verb form.",
+                suggestion: "are going to discos",
+                startIndex: 69,
+                endIndex: 85
+            ),
+            .init(
+                id: UUID().uuidString,
+                type: .grammar,
+                text: "hear music in the radio.",
+                message: "Incorrect preposition 'in' used with 'radio'.",
+                suggestion: "listen to music on the radio.",
+                startIndex: 100,
+                endIndex: 123
+            ),
+            .init(
+                id: UUID().uuidString,
+                type: .vocabulary,
+                text: "go bathing in a lake.",
+                message: "Uncommon expression 'go bathing'.",
+                suggestion: "go swimming in a lake.",
+                startIndex: 141,
+                endIndex: 160
+            ),
+            .init(
+                id: UUID().uuidString,
+                type: .grammar,
+                text: "I haven't any brothers or sisters.",
+                message: "Incorrect negative form.",
+                suggestion: "I don't have any brothers or sisters.",
+                startIndex: 163,
+                endIndex: 196
+            ),
+            .init(
+                id: UUID().uuidString,
+                type: .vocabulary,
+                text: "busses",
+                message: "The plural of 'bus' is 'buses'.",
+                suggestion: "buses",
+                startIndex: 206,
+                endIndex: 211
+            ),
+            .init(
+                id: UUID().uuidString,
+                type: .vocabulary,
+                text: "scool",
+                message: "The word 'scool' is misspelled.",
+                suggestion: "school.",
+                startIndex: 216,
+                endIndex: 221
+            ),
+            .init(
+                id: UUID().uuidString,
+                type: .grammar,
+                text: "I visit year 9 at my school.",
+                message: "Incorrect verb 'visit' used.",
+                suggestion: "I am in year 9 at my school.",
+                startIndex: 223,
+                endIndex: 250
+            ),
+            .init(
+                id: UUID().uuidString,
+                type: .grammar,
+                text: "I hope I will become a new guitar.",
+                message: "Incorrect verb 'become' used.",
+                suggestion: "I hope I will get a new guitar.",
+                startIndex: 278,
+                endIndex: 311
+            ),
+            .init(
+                id: UUID().uuidString,
+                type: .grammar,
+                text: "looking forward to get a e-mail from you.",
+                message: "Incorrect verb form after 'looking forward to'.",
+                suggestion: "looking forward to getting an email from you.",
+                startIndex: 316,
+                endIndex: 357
+            ),
+            .init(
+                id: UUID().uuidString,
+                type: .style,
+                text: "e-mail",
+                message: "Hyphenated 'e-mail' is less common.",
+                suggestion: "email",
+                startIndex: 342,
+                endIndex: 347
+            ),
+            .init(
+                id: UUID().uuidString,
+                type: .style,
+                text: "Yours,",
+                message: "Closing may be more complete with 'sincerely'.",
+                suggestion: "Yours sincerely,",
+                startIndex: 360,
+                endIndex: 366
+            ),
+        ],
+        createdAt: Date()
+    )
+
     static let mockReal = Check(
         id: "check_47891",
         prompt: """

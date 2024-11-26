@@ -39,6 +39,7 @@ public struct HomeView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .task { await send(.task).finish() }
             .onFirstAppear { send(.onFirstAppear) }
+            .isLoading(self.store.isLoadingCheck)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {

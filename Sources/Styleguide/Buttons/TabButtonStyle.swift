@@ -9,7 +9,7 @@ public struct TabButtonStyle: ButtonStyle {
 
         public static var light: ColorScheme {
             ColorScheme(
-                activeBackground: .purple400,
+                activeBackground: .purpleMarker,
                 inactiveBackground: .neutral100,
                 activeText: .neutral0,
                 inactiveText: .neutral600
@@ -18,7 +18,7 @@ public struct TabButtonStyle: ButtonStyle {
 
         public static var dark: ColorScheme {
             ColorScheme(
-                activeBackground: .purple400,
+                activeBackground: .purple500,
                 inactiveBackground: .neutral800,
                 activeText: .neutral0,
                 inactiveText: .neutral300

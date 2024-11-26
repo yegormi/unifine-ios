@@ -19,6 +19,11 @@ public struct CheckResultView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 24) {
+            Text("AI generation probability is " + String(format: "%.2f", self.store.check.aiScore) + "%")
+                .font(.system(size: 22, weight: .regular))
+                .foregroundStyle(.primary)
+                .underline()
+
             self.highlightedTextSection
 
             Spacer()
@@ -35,9 +40,10 @@ public struct CheckResultView: View {
                         .font(.system(size: 18, weight: .semibold))
                 }
             }
+            .disabled(self.store.isChecking)
             .buttonStyle(.primary(size: .fullWidth))
         }
-        .padding(20)
+        .padding(.horizontal, 20)
         .sheet(isPresented: self.$showingIssueSheet) {
             if let selectedIssue = store.selectedIssue {
                 IssueDetailSheet(issue: selectedIssue)
@@ -71,12 +77,18 @@ public struct CheckResultView: View {
             send(.issueSelected(issue))
         }
         .frame(maxWidth: .infinity, minHeight: 300, maxHeight: .infinity)
+        .padding(.vertical, 15)
+        .padding(.horizontal, 20)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.primary, lineWidth: 1)
+        )
     }
 }
 
 #Preview {
     CheckResultView(
-        store: Store(initialState: CheckResult.State(check: .mockTechnical)) {
+        store: Store(initialState: CheckResult.State(check: .mockChatO1)) {
             CheckResult()
         }
     )

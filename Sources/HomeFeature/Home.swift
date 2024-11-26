@@ -15,6 +15,7 @@ public struct Home: Reducer, Sendable {
 
         var checks: [CheckPreview]?
         var isLoading = false
+        var isLoadingCheck = false
 
         public init() {
             self.path = StackState<Path.State>()
@@ -82,9 +83,17 @@ public struct Home: Reducer, Sendable {
                 state.checks = checks
                 return .none
 
-            case let .internal(.selectedCheckResponse(.success(check))):
-                state.path.append(.checkResult(CheckResult.State(check: check)))
-                return .none
+            case let .internal(.selectedCheckResponse(result)):
+                state.isLoadingCheck = false
+
+                switch result {
+                case let .success(check):
+                    state.path.append(.checkResult(CheckResult.State(check: check)))
+                    return .none
+                case let .failure(error):
+                    logger.error("Failed to get check: \(error)")
+                    return .none
+                }
 
             case .internal:
                 return .none
@@ -112,6 +121,8 @@ public struct Home: Reducer, Sendable {
                 }
 
             case let .view(.checkTapped(check)):
+                state.isLoadingCheck = true
+
                 return .run { send in
                     await send(.internal(.selectedCheckResponse(Result {
                         try await self.api.getCheck(check.id)
