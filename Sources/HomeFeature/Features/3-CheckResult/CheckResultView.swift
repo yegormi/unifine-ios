@@ -10,8 +10,6 @@ import SwiftUIHelpers
 @ViewAction(for: CheckResult.self)
 public struct CheckResultView: View {
     @Bindable public var store: StoreOf<CheckResult>
-    @State private var showingIssueSheet = false
-    @State private var showingMatchSheet = false
 
     public init(store: StoreOf<CheckResult>) {
         self.store = store
@@ -24,7 +22,16 @@ public struct CheckResultView: View {
                 .foregroundStyle(.primary)
                 .underline()
 
-            self.highlightedTextSection
+            InteractiveTextView(check: self.store.check) { issue in
+                send(.issueTapped(issue))
+            }
+            .frame(maxWidth: .infinity, minHeight: 300, maxHeight: .infinity)
+            .padding(.vertical, 15)
+            .padding(.horizontal, 20)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.primary, lineWidth: 1)
+            )
 
             Spacer()
 
@@ -44,45 +51,26 @@ public struct CheckResultView: View {
             .buttonStyle(.primary(size: .fullWidth))
         }
         .padding(.horizontal, 20)
-        .sheet(isPresented: self.$showingIssueSheet) {
-            if let selectedIssue = store.selectedIssue {
-                IssueDetailSheet(issue: selectedIssue)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                    .padding(25)
-                    .presentationDetents([.medium])
-                    .presentationDragIndicator(.visible)
-            }
+        .sheet(
+            item: self.$store.scope(state: \.destination?.issueDetail, action: \.destination.issueDetail)
+        ) { store in
+            IssueDetailView(store: store)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                .padding(25)
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.hidden)
+                .presentationCornerRadius(40)
         }
-        .sheet(isPresented: Binding(
-            get: { self.store.showingMatchSheet },
-            set: { newValue in
-                if !newValue {
-                    send(.dismissMatchSheet)
-                }
-            }
-        )) {
-            if let matches = store.matches {
-                PlagiarismMatchesView(matches: matches)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                    .contentMargins(.all, 25, for: .scrollContent)
-                    .presentationDetents([.medium])
-                    .presentationDragIndicator(.visible)
-            }
+        .sheet(
+            item: self.$store.scope(state: \.destination?.matchesDetail, action: \.destination.matchesDetail)
+        ) { store in
+            MatchesDetailView(store: store)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                .contentMargins(.all, 25, for: .scrollContent)
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.hidden)
+                .presentationCornerRadius(40)
         }
-    }
-
-    private var highlightedTextSection: some View {
-        InteractiveTextView(check: self.store.check) { issue in
-            self.showingIssueSheet = true
-            send(.issueSelected(issue))
-        }
-        .frame(maxWidth: .infinity, minHeight: 300, maxHeight: .infinity)
-        .padding(.vertical, 15)
-        .padding(.horizontal, 20)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.primary, lineWidth: 1)
-        )
     }
 }
 

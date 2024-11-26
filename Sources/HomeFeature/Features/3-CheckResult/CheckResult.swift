@@ -5,16 +5,16 @@ import OSLog
 import SessionClient
 import SharedModels
 
+private let logger = Logger(subsystem: "CheckResult", category: "CheckResult")
+
 @Reducer
 public struct CheckResult: Reducer, Sendable {
     @ObservableState
     public struct State: Equatable, Sendable {
         let check: Check
-        var selectedIssue: Check.Issue?
-        var matches: [Match]?
         var isChecking = false
 
-        var showingMatchSheet = false
+        @Presents var destination: Destination.State?
 
         public init(check: Check) {
             self.check = check
@@ -22,6 +22,7 @@ public struct CheckResult: Reducer, Sendable {
     }
 
     public enum Action: ViewAction {
+        case destination(PresentationAction<Destination.Action>)
         case `internal`(Internal)
         case view(View)
 
@@ -30,10 +31,15 @@ public struct CheckResult: Reducer, Sendable {
         }
 
         public enum View {
-            case issueSelected(Check.Issue?)
             case plagiarismCheckTapped
-            case dismissMatchSheet
+            case issueTapped(Check.Issue)
         }
+    }
+
+    @Reducer(state: .equatable, .sendable)
+    public enum Destination {
+        case issueDetail(IssueDetail)
+        case matchesDetail(MatchesDetail)
     }
 
     @Dependency(\.apiClient) var api
@@ -45,19 +51,15 @@ public struct CheckResult: Reducer, Sendable {
             switch action {
             case let .internal(.plagiarismCheckResponse(result)):
                 state.isChecking = false
-
                 switch result {
                 case let .success(matches):
-                    state.matches = matches
-                    state.showingMatchSheet = true
+                    state.destination = .matchesDetail(MatchesDetail.State(matches: matches))
                     return .none
                 case let .failure(error):
-                    os_log(.error, log: .default, "Failed to check for plagiarism: %@", error.localizedDescription)
+                    logger.error("Failed to check for plagiarism: \(error)")
                     return .none
                 }
-            case let .view(.issueSelected(issue)):
-                state.selectedIssue = issue
-                return .none
+
             case .view(.plagiarismCheckTapped):
                 state.isChecking = true
                 return .run { [state] send in
@@ -65,10 +67,15 @@ public struct CheckResult: Reducer, Sendable {
                         try await self.api.getMatchesById(state.check.id)
                     })))
                 }
-            case .view(.dismissMatchSheet):
-                state.showingMatchSheet = false
+
+            case let .view(.issueTapped(issue)):
+                state.destination = .issueDetail(IssueDetail.State(issue: issue))
+                return .none
+
+            case .destination:
                 return .none
             }
         }
+        .ifLet(\.$destination, action: \.destination)
     }
 }
