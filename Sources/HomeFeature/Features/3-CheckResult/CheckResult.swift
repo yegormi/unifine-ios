@@ -13,6 +13,7 @@ public struct CheckResult: Reducer, Sendable {
     public struct State: Equatable, Sendable {
         let check: Check
         var isChecking = false
+        var matches: [Match]?
 
         @Presents var destination: Destination.State?
 
@@ -22,9 +23,14 @@ public struct CheckResult: Reducer, Sendable {
     }
 
     public enum Action: ViewAction {
+        case delegate(Delegate)
         case destination(PresentationAction<Destination.Action>)
         case `internal`(Internal)
         case view(View)
+
+        public enum Delegate {
+            case didDismiss
+        }
 
         public enum Internal {
             case plagiarismCheckResponse(Result<[Match], Error>)
@@ -33,6 +39,7 @@ public struct CheckResult: Reducer, Sendable {
         public enum View {
             case plagiarismCheckTapped
             case issueTapped(Check.Issue)
+            case dismissButtonTapped
         }
     }
 
@@ -49,10 +56,14 @@ public struct CheckResult: Reducer, Sendable {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
+            case .delegate:
+                return .none
+
             case let .internal(.plagiarismCheckResponse(result)):
                 state.isChecking = false
                 switch result {
                 case let .success(matches):
+                    state.matches = matches
                     state.destination = .matchesDetail(MatchesDetail.State(matches: matches))
                     return .none
                 case let .failure(error):
@@ -71,6 +82,9 @@ public struct CheckResult: Reducer, Sendable {
             case let .view(.issueTapped(issue)):
                 state.destination = .issueDetail(IssueDetail.State(issue: issue))
                 return .none
+
+            case .view(.dismissButtonTapped):
+                return .send(.delegate(.didDismiss))
 
             case .destination:
                 return .none

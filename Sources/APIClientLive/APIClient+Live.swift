@@ -17,12 +17,18 @@ private func throwingUnderlyingError<T>(_ closure: () async throws -> T) async t
 
 extension APIClient: DependencyKey {
     public static var liveValue: Self {
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = 3 * 60
+        configuration.timeoutIntervalForResource = 5 * 60
+
+        let session = URLSession(configuration: configuration)
+
         let client = Client(
             serverURL: try! Servers.Server1.url(), // swiftlint:disable:this force_try
             configuration: Configuration(
                 dateTranscoder: .iso8601WithFractions
             ),
-            transport: URLSessionTransport(),
+            transport: URLSessionTransport(configuration: URLSessionTransport.Configuration(session: session)),
             middlewares: [
                 ErrorMiddleware(),
                 AuthenticationMiddleware(),

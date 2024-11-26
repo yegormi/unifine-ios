@@ -17,7 +17,7 @@ public struct CheckResultView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text("AI generation probability is " + String(format: "%.2f", self.store.check.aiScore) + "%")
+            Text("AI generation probability is " + String(Int(self.store.check.aiScore.rounded())) + "%")
                 .font(.system(size: 22, weight: .regular))
                 .foregroundStyle(.primary)
                 .underline()
@@ -35,20 +35,14 @@ public struct CheckResultView: View {
 
             Spacer()
 
-            Button {
-                send(.plagiarismCheckTapped)
-            } label: {
-                HStack {
-                    if self.store.isChecking {
-                        ProgressView()
-                    }
-                    Text("Plagiarism check")
-                        .foregroundStyle(.white)
-                        .font(.system(size: 18, weight: .semibold))
-                }
+            if let matches = self.store.matches, matches.isEmpty {
+                Text("No matches found")
+                    .foregroundStyle(Color.primary)
+                    .font(.system(size: 26, weight: .semibold))
+                    .padding(20)
+            } else {
+                self.plagiarismButton
             }
-            .disabled(self.store.isChecking)
-            .buttonStyle(.primary(size: .fullWidth))
         }
         .padding(.horizontal, 20)
         .sheet(
@@ -71,6 +65,36 @@ public struct CheckResultView: View {
                 .presentationDragIndicator(.hidden)
                 .presentationCornerRadius(40)
         }
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    send(.dismissButtonTapped)
+                } label: {
+                    Image(systemName: "xmark")
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                        .clipShape(Rectangle())
+                }
+            }
+        }
+    }
+
+    @ViewBuilder private var plagiarismButton: some View {
+        Button {
+            send(.plagiarismCheckTapped)
+        } label: {
+            HStack {
+                if self.store.isChecking {
+                    ProgressView()
+                }
+                Text("Plagiarism check")
+                    .foregroundStyle(.white)
+                    .font(.system(size: 18, weight: .semibold))
+            }
+        }
+        .disabled(self.store.isChecking)
+        .buttonStyle(.primary(size: .fullWidth))
     }
 }
 

@@ -71,6 +71,10 @@ public struct Home: Reducer, Sendable {
                 state.path.append(.checkResult(CheckResult.State(check: check)))
                 return .none
 
+            case .path(.element(id: _, action: .checkResult(.delegate(.didDismiss)))):
+                state.path.removeAll()
+                return .none
+
             case .path:
                 return .none
 
