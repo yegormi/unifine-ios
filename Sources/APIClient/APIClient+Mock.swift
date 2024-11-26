@@ -11,6 +11,6 @@ public extension APIClient {
         },
         getCheck: { _ in .mock },
         deleteCheck: { _ in },
-        getMatches: { _ in .init() }
+        getMatchesById: { _ in .init() }
     )
 }

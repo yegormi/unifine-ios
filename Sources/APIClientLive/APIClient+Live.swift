@@ -91,9 +91,9 @@ extension APIClient: DependencyKey {
                         .noContent
                 }
             },
-            getMatches: { id in
+            getMatchesById: { id in
                 try await throwingUnderlyingError {
-                    try await client.getMatchesForCheck(path: .init(checkId: id))
+                    try await client.getMatchesById(path: .init(checkId: id))
                         .ok
                         .body
                         .json

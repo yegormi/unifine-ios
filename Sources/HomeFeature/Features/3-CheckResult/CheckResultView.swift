@@ -17,31 +17,32 @@ public struct CheckResultView: View {
     }
 
     public var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-//                self.titleSection
-                self.highlightedTextSection
+        VStack(alignment: .leading, spacing: 24) {
+            self.highlightedTextSection
+
+            Spacer()
+
+            Button {
+                send(.plagiarismCheckTapped)
+            } label: {
+                HStack {
+                    if self.store.isChecking {
+                        ProgressView()
+                    }
+                    Text("Plagiarism check")
+                        .foregroundStyle(.white)
+                        .font(.system(size: 18, weight: .semibold))
+                }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 24)
+            .buttonStyle(.primary(size: .fullWidth))
         }
+        .padding(20)
         .sheet(isPresented: self.$showingIssueSheet) {
             if let selectedIssue = store.selectedIssue {
                 IssueDetailSheet(issue: selectedIssue)
                     .presentationDetents([.medium])
                     .presentationDragIndicator(.visible)
             }
-        }
-    }
-
-    private var titleSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(self.store.check.title)
-                .font(.title2)
-                .fontWeight(.bold)
-
-            Text(self.store.check.summary)
-                .foregroundStyle(.secondary)
         }
     }
 

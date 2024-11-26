@@ -206,7 +206,7 @@ paths:
         - bearer: []
   /checks/{checkId}/matches:
     post:
-      operationId: getMatchesForCheck
+      operationId: getMatchesById
       summary: Get matches for a check
       description: Get matches for a check
       tags:

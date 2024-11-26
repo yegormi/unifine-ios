@@ -18,7 +18,7 @@ public struct APIClient: Sendable {
     public var deleteCheck: @Sendable (Check.ID) async throws -> Void
 
     // Match Operations
-    public var getMatches: @Sendable (Check.ID) async throws -> [Match]
+    public var getMatchesById: @Sendable (Check.ID) async throws -> [Match]
 }
 
 public extension DependencyValues {
