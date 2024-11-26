@@ -1,6 +1,25 @@
 import Foundation
 import SwiftUI
 
+public enum PlagiarismLevel: String {
+    case high = "High"
+    case medium = "Medium"
+    case low = "Low"
+
+    public var color: Color {
+        switch self {
+        case .high:
+            Color(red: 240 / 255, green: 128 / 255, blue: 128 / 255) // Coral pink
+        case .medium:
+            Color(red: 255 / 255, green: 179 / 255, blue: 102 / 255) // Peach
+        case .low:
+            Color(red: 169 / 255, green: 196 / 255, blue: 169 / 255) // Sage green
+        }
+    }
+}
+
+// MARK: - Models
+
 public struct Match: Sendable, Equatable, Identifiable {
     public let id: String
     public let url: URL
@@ -12,38 +31,14 @@ public struct Match: Sendable, Equatable, Identifiable {
         self.score = score
     }
 
-    // Score classification computed properties
-    private var isHigh: Bool {
-        self.score >= 0.7
-    }
-
-    private var isMedium: Bool {
-        self.score >= 0.4 && self.score < 0.7
-    }
-
-    private var isLow: Bool {
-        self.score < 0.4
-    }
-
-    // Color properties (using standard iOS colors)
-    public var color: Color {
-        if self.isHigh {
-            Color(red: 240 / 255, green: 128 / 255, blue: 128 / 255) // Coral pink
-        } else if self.isMedium {
-            Color(red: 255 / 255, green: 179 / 255, blue: 102 / 255) // Peach
-        } else {
-            Color(red: 169 / 255, green: 196 / 255, blue: 169 / 255) // Sage green
-        }
-    }
-
-    // Level classification
-    public var level: String {
-        if self.isHigh {
-            "High"
-        } else if self.isMedium {
-            "Medium"
-        } else {
-            "Low"
+    public var level: PlagiarismLevel {
+        switch self.score {
+        case 70...:
+            .high
+        case 25 ..< 70:
+            .medium
+        default:
+            .low
         }
     }
 }

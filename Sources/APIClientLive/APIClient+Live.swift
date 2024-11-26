@@ -94,7 +94,7 @@ extension APIClient: DependencyKey {
             getMatchesById: { id in
                 try await throwingUnderlyingError {
                     try await client.getMatchesById(path: .init(checkId: id))
-                        .ok
+                        .created
                         .body
                         .json
                         .map { $0.toDomain() }

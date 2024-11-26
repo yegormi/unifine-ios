@@ -38,4 +38,6 @@ public extension Color {
     static let blueMarker = Color(.blueMarker)
     static let orangeMarker = Color(.orangeMarker)
     static let purpleMarker = Color(.purpleMarker)
+
+    static let linkPrimary = Color(.linkPrimary)
 }

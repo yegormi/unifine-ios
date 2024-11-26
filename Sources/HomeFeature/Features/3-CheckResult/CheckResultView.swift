@@ -11,6 +11,7 @@ import SwiftUIHelpers
 public struct CheckResultView: View {
     @Bindable public var store: StoreOf<CheckResult>
     @State private var showingIssueSheet = false
+    @State private var showingMatchSheet = false
 
     public init(store: StoreOf<CheckResult>) {
         self.store = store
@@ -40,6 +41,24 @@ public struct CheckResultView: View {
         .sheet(isPresented: self.$showingIssueSheet) {
             if let selectedIssue = store.selectedIssue {
                 IssueDetailSheet(issue: selectedIssue)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                    .padding(25)
+                    .presentationDetents([.medium])
+                    .presentationDragIndicator(.visible)
+            }
+        }
+        .sheet(isPresented: Binding(
+            get: { self.store.showingMatchSheet },
+            set: { newValue in
+                if !newValue {
+                    send(.dismissMatchSheet)
+                }
+            }
+        )) {
+            if let matches = store.matches {
+                PlagiarismMatchesView(matches: matches)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                    .contentMargins(.all, 25, for: .scrollContent)
                     .presentationDetents([.medium])
                     .presentationDragIndicator(.visible)
             }
